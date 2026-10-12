@@ -37,3 +37,17 @@ def test_build_dataset(tmp_path):
     for r in manifest:
         assert (tmp_path / "out" / r["path"]).exists()
         assert "blot" not in r["path"] and "r0" not in r["path"]  # names don't leak origin
+
+
+def test_match_histogram_copies_reference_levels():
+    import numpy as np
+
+    from fake_blot_detection.synth import match_histogram
+
+    img = draw_blot(1, 120, 40)
+    ref = Image.fromarray(np.linspace(0, 255, 120 * 40).reshape(40, 120).astype(np.uint8))
+    out = np.asarray(match_histogram(img, ref))
+    assert abs(out.mean() - np.asarray(ref).mean()) < 1
+    assert abs(out.std() - np.asarray(ref).std()) < 1
+    # Pixel order is kept: the darkest pixel stays the darkest.
+    assert np.asarray(img).argmin() == out.argmin()

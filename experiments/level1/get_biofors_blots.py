@@ -21,6 +21,7 @@ import urllib.request
 from collections import defaultdict
 from pathlib import Path
 
+import numpy as np
 from PIL import Image
 
 ANNOTATION_URL = "https://raw.githubusercontent.com/vimal-isi-edu/BioFors/main/annotation_files/"
@@ -78,6 +79,13 @@ def main():
     ap.add_argument("--n", type=int, default=150, help="how many blots to extract")
     ap.add_argument("--per-paper", type=int, default=2, help="max blots taken from one paper")
     ap.add_argument("--min-side", type=int, default=40, help="skip images smaller than this")
+    ap.add_argument(
+        "--max-dark",
+        type=float,
+        default=0.5,
+        help="skip images where more than this fraction of pixels is dark: these are "
+        "mostly DNA gels (white bands on black), not western blots",
+    )
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--cache", type=Path, default=Path("data/biofors"))
     ap.add_argument("--out", type=Path, default=Path("data/raw/biofors_blots"))
@@ -106,6 +114,9 @@ def main():
             with Image.open(tar.extractfile(member)) as img:
                 img.load()
                 if min(img.size) < args.min_side:
+                    continue
+                gray = np.asarray(img.convert("L"))
+                if (gray < 128).mean() > args.max_dark:
                     continue
                 paper, name = key.split("/")
                 img.save(args.out / f"{paper}_{name}")
