@@ -1,4 +1,4 @@
-"""Ask Claude to judge every image in a prepared dataset. Needs ANTHROPIC_API_KEY.
+"""Ask Claude to judge every image in a prepared dataset. Needs BLOT_ANTHROPIC_API_KEY or ANTHROPIC_API_KEY.
 
     python experiments/level1/run_claude.py --data data/level1 --limit 10   # try a few first
     python experiments/level1/run_claude.py --data data/level1             # then the rest

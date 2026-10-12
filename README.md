@@ -72,7 +72,9 @@ pytest
    python experiments/level1/analyze.py --data data/level1
    ```
 
-5. **Run Claude.** Needs an Anthropic API key in `ANTHROPIC_API_KEY`. Try a few images
+5. **Run Claude.** Needs an Anthropic API key in `BLOT_ANTHROPIC_API_KEY`
+   (or `ANTHROPIC_API_KEY`, where that name isn't reserved, as it is in Claude Code cloud
+   sessions). Try a few images
    first. Re-running resumes where it stopped.
 
    ```bash

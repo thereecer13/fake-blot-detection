@@ -6,11 +6,16 @@ the refusal is recorded as a result, so every score comes from the model you cho
 
 import base64
 import json
+import os
 from pathlib import Path
 from typing import Literal
 
 import anthropic
 from pydantic import BaseModel, Field, ValidationError
+
+# Read first, so the key can be set where ANTHROPIC_API_KEY is reserved (e.g. Claude Code
+# cloud sessions); falls back to ANTHROPIC_API_KEY.
+API_KEY_ENV = "BLOT_ANTHROPIC_API_KEY"
 
 PROMPT_VERSION = "v1"
 PROMPT = """\
@@ -50,7 +55,7 @@ class ClaudeDetector:
     ):
         self.model = model
         self.effort = effort
-        self.client = client or anthropic.Anthropic()
+        self.client = client or anthropic.Anthropic(api_key=os.environ.get(API_KEY_ENV))
 
     @property
     def name(self) -> str:
